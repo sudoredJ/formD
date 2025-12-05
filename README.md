@@ -1,4 +1,4 @@
-# vcdoxxer
+# VCdoxxer
 
 VC fund intelligence from SEC filings.
 
