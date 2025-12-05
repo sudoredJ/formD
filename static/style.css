@@ -241,7 +241,7 @@ button:hover { background: #333; }
     right: 0;
     height: 12px;
     background: 
-        linear-gradient(180deg, rgba(255,255,255,0.3) 0%, transparent 50%),
+        linear-gradient(0deg, rgba(255,255,255,0.3) 0%, transparent 50%),
         repeating-linear-gradient(
             90deg,
             #1a1a1a 0px,
@@ -249,5 +249,5 @@ button:hover { background: #333; }
             #fff 6px,
             #fff 12px
         );
-    box-shadow: 0 -1px 0 rgba(255,255,255,0.4) inset;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.4) inset;
 }
