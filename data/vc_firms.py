@@ -270,12 +270,6 @@ VC_FIRMS = [
         "cik": "1431873",
     },
     {
-        "name": "Mayfield Fund",
-        "aliases": ["mayfield"],
-        "website": "https://www.mayfield.com",
-        "cik": "1389937",
-    },
-    {
         "name": "Shasta Ventures",
         "aliases": ["shasta"],
         "website": "https://shastaventures.com",
@@ -519,7 +513,7 @@ VC_FIRMS = [
         "name": "Mayfield",
         "aliases": ["mayfield fund"],
         "website": "https://www.mayfield.com",
-        "cik": "1494163",
+        "cik": "1389937",
         "location": "Menlo Park, CA",
         "focus": ["Enterprise", "Consumer", "AI"],
         "aum_estimate": "$3B+",
