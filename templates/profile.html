@@ -5,7 +5,7 @@
 {% block content %}
 <section class="profile">
     <h2>{{ firm.sec_entity_name or firm.name }}</h2>
-    <p class="cik">CIK: {{ firm.cik }}<span class="tip" data-tip="Central Index Key - SEC unique identifier">?</span></p>
+    <p class="cik">CIK: {{ firm.cik }} <span class="tip" data-tip="Central Index Key - SEC unique identifier">?</span></p>
     
     {% if firm.website %}
     <p class="website"><a href="{{ firm.website }}" target="_blank">{{ firm.website }}</a></p>
