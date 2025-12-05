@@ -88,7 +88,7 @@
     <p class="no-data">No filings found.</p>
     {% endif %}
     
-    <h3>S-1 Filings</h3>
+    <h3>S-1 Filings <span class="tip" data-tip="IPO filings mentioning this VC as an investor">?</span></h3>
     <div id="portfolio-exits">
         <button id="s1-btn" hx-get="/portfolio-exits/{{ firm.sec_entity_name|urlencode }}" 
                 hx-target="#portfolio-exits"

@@ -151,6 +151,7 @@ def search_firms(query: str, max_results: int = 10) -> list[FirmSearchResult]:
     
     # Fetch company info for each CIK - filter to only show VC funds from 2016+
     results = []
+    seen_names = set()  # Deduplicate by normalized name
     query_words = [w.lower() for w in query.split()]
     
     for cik in list(seen_ciks)[:max_results * 5]:  # Get more, then filter
@@ -165,6 +166,10 @@ def search_firms(query: str, max_results: int = 10) -> list[FirmSearchResult]:
         
         name_lower = info["name"].lower()
         
+        # Deduplicate by exact name (case-insensitive) - suffixes matter for legal entities
+        if name_lower in seen_names:
+            continue
+        
         # Must match query (contains any query word)
         matches_query = any(w in name_lower for w in query_words)
         if not matches_query:
@@ -177,6 +182,7 @@ def search_firms(query: str, max_results: int = 10) -> list[FirmSearchResult]:
         ])
         
         if is_likely_fund:
+            seen_names.add(name_lower)
             results.append(FirmSearchResult(
                 cik=info["cik"],
                 name=info["name"],

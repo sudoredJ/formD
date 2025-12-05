@@ -126,6 +126,12 @@ VC_FIRMS = [
         "cik": "1626606",
     },
     {
+        "name": "Walden Catalyst Ventures",
+        "aliases": ["walden", "walden catalyst"],
+        "website": "https://www.waldenvc.com",
+        "cik": "1358711",
+    },
+    {
         "name": "First Round Capital",
         "aliases": ["first round", "frc"],
         "website": "https://firstround.com",
@@ -635,24 +641,36 @@ VC_FIRMS = [
 def search_curated_vcs(query: str, limit: int = 10) -> list[dict]:
     """
     Search the curated VC database.
-    Returns matches based on name and aliases.
+    Returns matches based on name and aliases. Deduplicates by normalized name.
     """
     query_lower = query.lower().strip()
     if len(query_lower) < 2:
         return []
     
     results = []
+    seen_names = set()  # Track normalized names to avoid duplicates
+    
     for firm in VC_FIRMS:
-        # Check main name
-        if query_lower in firm["name"].lower():
-            results.append(firm)
+        # Normalize name for deduplication
+        normalized = firm["name"].lower().strip()
+        if normalized in seen_names:
             continue
         
-        # Check aliases
-        for alias in firm.get("aliases", []):
-            if query_lower in alias.lower():
-                results.append(firm)
-                break
+        matched = False
+        
+        # Check main name
+        if query_lower in firm["name"].lower():
+            matched = True
+        else:
+            # Check aliases
+            for alias in firm.get("aliases", []):
+                if query_lower in alias.lower():
+                    matched = True
+                    break
+        
+        if matched:
+            seen_names.add(normalized)
+            results.append(firm)
     
     # Sort by name length (shorter = more relevant) then alphabetically
     results.sort(key=lambda x: (len(x["name"]), x["name"]))

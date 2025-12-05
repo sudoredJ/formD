@@ -3,10 +3,7 @@
     {% for exit in exits %}
     <li>
         <a href="{{ exit.s1_url }}" target="_blank"><strong>{{ exit.company }}</strong></a>
-        <span class="meta">{{ exit.ipo_date }}</span>
-        {% if exit.mentions %}
-        <span class="ownership">{{ exit.mentions|join(' · ') }}</span>
-        {% endif %}
+        <span class="meta">{{ exit.ipo_date }} · {{ exit.form_type or "S-1" }}</span>
     </li>
     {% endfor %}
 </ul>
