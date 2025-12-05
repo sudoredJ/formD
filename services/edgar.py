@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from datetime import date
 from typing import Optional
 from config import EDGAR_SEARCH_URL, EDGAR_FILING_URL, EDGAR_USER_AGENT, EDGAR_RATE_LIMIT
+from services.cache import firm_cache, filing_cache, company_info_cache
 
 
 # Rate limiting
@@ -40,6 +41,7 @@ class FirmSearchResult:
     filing_count: int
 
 
+@company_info_cache
 def _get_company_info(cik: str) -> dict:
     """Fetch company info from SEC submissions API."""
     padded_cik = cik.lstrip("0").zfill(10)
@@ -96,6 +98,7 @@ def _generate_name_variations(query: str) -> list[str]:
     return variations
 
 
+@firm_cache
 def search_firms(query: str, max_results: int = 10) -> list[FirmSearchResult]:
     """
     Search for firms by name using multiple approaches:
@@ -238,6 +241,7 @@ def _parse_date(text: Optional[str]) -> Optional[date]:
         return None
 
 
+@filing_cache
 def fetch_filing(cik: str, accession_number: str) -> Optional[FormDFiling]:
     """
     Fetch and parse a single Form D filing.
@@ -325,6 +329,7 @@ def fetch_filing(cik: str, accession_number: str) -> Optional[FormDFiling]:
     )
 
 
+@filing_cache
 def get_filings_for_cik(cik: str) -> list[FormDFiling]:
     """
     Get all Form D filings for a given CIK using the submissions API.

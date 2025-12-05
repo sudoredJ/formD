@@ -1,11 +1,10 @@
-"""
-S-1 Mining Service - Find portfolio company IPOs mentioning a VC as investor.
-"""
+"""S-1 Mining Service - Find portfolio company IPOs mentioning a VC as investor."""
 
 import requests
 import re
 from dataclasses import dataclass
 from config import EDGAR_USER_AGENT
+from services.cache import s1_cache
 
 
 @dataclass
@@ -19,11 +18,9 @@ class S1Hit:
     url: str
 
 
+@s1_cache
 def search_s1_mentions(vc_name: str, limit: int = 10) -> list[S1Hit]:
-    """
-    Search SEC EDGAR for S-1 filings mentioning a VC as an investor.
-    Uses EXACT phrase match on the full VC name to avoid false positives.
-    """
+    """Search SEC EDGAR for S-1 filings mentioning a VC as an investor."""
     base_url = "https://efts.sec.gov/LATEST/search-index"
     headers = {"User-Agent": EDGAR_USER_AGENT}
     

@@ -5,6 +5,7 @@ from datetime import datetime
 from dataclasses import dataclass
 
 from config import RSS_FEEDS
+from services.cache import rss_cache
 
 
 @dataclass
@@ -16,6 +17,7 @@ class PressRelease:
     summary: str
 
 
+@rss_cache
 def fetch_feed(source: str, url: str) -> list[PressRelease]:
     """Fetch and parse a single RSS feed."""
     feed = feedparser.parse(url)

@@ -4,6 +4,7 @@ import requests
 from dataclasses import dataclass
 from typing import Optional
 from config import EDGAR_USER_AGENT
+from services.cache import adv_cache
 
 
 @dataclass
@@ -21,6 +22,7 @@ class FormADVInfo:
     brochure_url: Optional[str]
 
 
+@adv_cache
 def search_form_adv(firm_name: str) -> list[dict]:
     """
     Search SEC IAPD for investment adviser by name.
@@ -66,6 +68,7 @@ def search_form_adv(firm_name: str) -> list[dict]:
         return []
 
 
+@adv_cache
 def get_form_adv_details(crd_number: str) -> Optional[FormADVInfo]:
     """
     Get detailed Form ADV info for an adviser by CRD number.
