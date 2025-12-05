@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}{{ firm.name }} - VentureDox{% endblock %}
+
+{% block content %}
+<section class="profile">
+    <h2>{{ firm.sec_entity_name or firm.name }}</h2>
+    <p class="cik">CIK: {{ firm.cik }}<span class="tip" data-tip="Central Index Key - SEC unique identifier">?</span></p>
+    
+    {% if firm.website %}
+    <p class="website"><a href="{{ firm.website }}" target="_blank">{{ firm.website }}</a></p>
+    {% endif %}
+    
+    {% if form_adv %}
+    <div class="adv-data">
+        {% if form_adv.aum %}<span>AUM: ${{ "{:,.0f}".format(form_adv.aum) }}</span>{% endif %}
+        {% if form_adv.employee_count %}<span>Employees: {{ form_adv.employee_count }}</span>{% endif %}
+        {% if form_adv.has_disclosure_events %}<span class="disclosure-flag">⚠ Disclosures</span>{% endif %}
+    </div>
+    {% endif %}
+    
+    {# Macro to format money: shows K for <1M, M for >=1M #}
+    {% macro money(val) %}{% if val >= 1000000 %}${{ "{:,.1f}".format(val / 1000000) }}M{% elif val >= 1000 %}${{ "{:,.0f}".format(val / 1000) }}K{% else %}${{ "{:,.0f}".format(val) }}{% endif %}{% endmacro %}
+    
+    <div class="metrics-grid">
+        <div class="metric">
+            <span class="label">Fund Size</span>
+            <span class="value">{{ money(metrics.fund_size) }}</span>
+        </div>
+        <div class="metric">
+            <span class="label">LP Count</span>
+            <span class="value">{{ metrics.lp_count or "—" }}</span>
+        </div>
+        <div class="metric">
+            <span class="label">Fund Age</span>
+            <span class="value">{{ metrics.fund_age_months }}mo</span>
+        </div>
+        <div class="metric">
+            <span class="label">Status</span>
+            <span class="value status-{{ metrics.deployment_status }}">{{ metrics.deployment_status }}</span>
+        </div>
+    </div>
+    
+    <h3>Estimated Check Size <span class="tip" data-tip="Based on fund size, reserve ratios, and portfolio size assumptions">?</span></h3>
+    <div class="check-estimate">
+        <div class="check-range">
+            <span class="low">{{ money(metrics.check_low) }}</span>
+            <span class="mid">{{ money(metrics.check_mid) }}</span>
+            <span class="high">{{ money(metrics.check_high) }}</span>
+        </div>
+        <div class="check-labels">
+            <span>Conservative</span>
+            <span>Base</span>
+            <span>Aggressive</span>
+        </div>
+        <p class="confidence">Confidence: <span class="conf-{{ metrics.confidence }}">{{ metrics.confidence|capitalize }}</span></p>
+    </div>
+    
+    <h3>Key People</h3>
+    {% if people %}
+    <ul class="people-list">
+        {% for person in people %}
+        <li>{{ person.name }}{% if person.relationships %} <span class="role">({{ person.relationships|join(", ") }})</span>{% endif %}</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p class="no-data">No related persons in filings.</p>
+    {% endif %}
+    
+    <h3>Form D Filings ({{ metrics.filing_count }})</h3>
+    {% if filings %}
+    <table class="filings-table">
+        <thead>
+            <tr><th>Date</th><th>Issuer</th><th>Amount</th><th>Investors</th></tr>
+        </thead>
+        <tbody>
+            {% for filing in filings %}
+            <tr>
+                <td><a href="https://www.sec.gov/Archives/edgar/data/{{ filing.cik }}/{{ filing.accession_number|replace('-', '') }}/xslFormDX01/primary_doc.xml" target="_blank"><span class="pdf-icon">pdf</span>{{ filing.filing_date }}</a></td>
+                <td>{{ filing.issuer_name }}</td>
+                <td>{% if filing.total_amount_sold %}${{ "{:,.0f}".format(filing.total_amount_sold) }}{% else %}—{% endif %}</td>
+                <td>{{ filing.investor_count or "—" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="no-data">No filings found.</p>
+    {% endif %}
+    
+    <h3>S-1 Filings</h3>
+    <div id="portfolio-exits">
+        <button id="s1-btn" hx-get="/portfolio-exits/{{ firm.sec_entity_name|urlencode }}" 
+                hx-target="#portfolio-exits"
+                hx-swap="innerHTML">Load S-1 filings</button><span id="s1-loader"></span>
+    </div>
+    <script>
+    document.getElementById('s1-btn').addEventListener('htmx:beforeRequest', function() {
+        document.getElementById('s1-loader').style.opacity = '1';
+    });
+    document.getElementById('s1-btn').addEventListener('htmx:afterRequest', function() {
+        document.getElementById('s1-loader').style.opacity = '0';
+    });
+    </script>
+    
+    <h3>Links</h3>
+    <ul class="osint-links">
+        {% for label, url in osint_links.items() %}
+        <li><a href="{{ url }}" target="_blank">{{ label }}</a></li>
+        {% endfor %}
+    </ul>
+</section>
+{% endblock %}

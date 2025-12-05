@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}VentureDox{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+<body>
+    <header>
+        <h1><a href="/">VentureDox.com</a><span class="byline">, by <a href="https://x.com/sudoredj" target="_blank" class="author">@sudoredj</a></span></h1>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Matmul Chip Loader -->
+    <div id="page-loader" class="matmul-loader">
+        <i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i>
+        <i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i>
+        <i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i>
+        <i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i>
+    </div>
+    
+    <script>
+    (function() {
+        var loader = document.getElementById('page-loader');
+        loader.style.display = 'none';
+        
+        // Show loader ONLY on click navigation (not typing)
+        document.addEventListener('click', function(e) {
+            var link = e.target.closest('.firm-results a, .portfolio-exits a, .search-results-page a');
+            if (link && link.href && !link.hasAttribute('hx-get') && !link.href.includes('javascript:')) {
+                loader.style.display = 'grid';
+            }
+            var btn = e.target.closest('button[hx-get]');
+            if (btn && btn.id !== 's1-btn') {
+                loader.style.display = 'grid';
+            }
+        });
+        
+        // Hide after HTMX completes
+        document.body.addEventListener('htmx:afterSwap', function(e) {
+            loader.style.display = 'none';
+        });
+        
+        document.body.addEventListener('htmx:responseError', function() {
+            loader.style.display = 'none';
+        });
+    })();
+    </script>
+</body>
+</html>
+

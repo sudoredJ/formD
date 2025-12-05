@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}{{ query }} - SEC Filings - VC OSINT{% endblock %}
+
+{% block content %}
+<section class="search-results-page">
+    <h2>{{ query }}</h2>
+    {% if website %}
+    <p class="website"><a href="{{ website }}" target="_blank">{{ website }}</a></p>
+    {% endif %}
+    
+    <h3>SEC EDGAR Form D Filings</h3>
+    
+    {% if results %}
+    <p class="results-count">Page {{ page }} results:</p>
+    <ul class="firm-results">
+        {% for firm in results %}
+        <li>
+            <a href="/firm/{{ firm.cik }}{% if website %}?website={{ website|urlencode }}{% endif %}">
+                <span class="result-text">
+                    <strong>{{ firm.name }}</strong>
+                    <span class="meta">CIK: {{ firm.cik }} · {{ firm.filing_count }} filing{{ 's' if firm.filing_count != 1 else '' }} · Last: {{ firm.recent_filing }}</span>
+                </span>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+    
+    {% else %}
+    <p>No Form D filings found for "{{ query }}".</p>
+    <p>Try searching with different terms or check the <a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&company={{ query|urlencode }}&type=D" target="_blank">SEC EDGAR directly</a>.</p>
+    {% endif %}
+    
+    <div class="bottom-nav">
+        <a href="/" class="back-link">← Back to search</a>
+        <div class="pagination">
+            {% if has_prev %}
+            <a href="/search-firm?name={{ query|urlencode }}{% if website %}&website={{ website|urlencode }}{% endif %}&page={{ page - 1 }}" class="page-btn">{{ page - 1 }}</a>
+            {% endif %}
+            <span class="page-num">{{ page }}</span>
+            {% if has_next %}
+            <a href="/search-firm?name={{ query|urlencode }}{% if website %}&website={{ website|urlencode }}{% endif %}&page={{ page + 1 }}" class="page-btn">{{ page + 1 }}</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

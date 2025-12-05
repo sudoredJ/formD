@@ -1,0 +1,45 @@
+{% if curated_results %}
+<ul class="firm-results">
+    {% for firm in curated_results %}
+    <li>
+        <a href="/search-firm?name={{ firm.name|urlencode }}{% if firm.website %}&website={{ firm.website|urlencode }}{% endif %}">
+            <span class="result-text">
+                <strong>{{ firm.name }}</strong>
+                <span class="meta">{% if firm.website %}{{ firm.website|replace("https://", "")|replace("http://", "") }}{% endif %}</span>
+            </span>
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+{% if edgar_results %}
+<ul class="firm-results">
+    {% for firm in edgar_results %}
+    <li>
+        <a href="/firm/{{ firm.cik }}">
+            <span class="result-text">
+                <strong>{{ firm.name }}</strong>
+                <span class="meta">CIK: {{ firm.cik }} · {{ firm.filing_count }} filings · Last: {{ firm.recent_filing }}</span>
+            </span>
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+{% if show_edgar_option and query %}
+<div class="search-other">
+    <button 
+        hx-get="/search?q={{ query }}&edgar=1" 
+        hx-target="#search-results"
+        hx-indicator="#search-spinner"
+    >
+        Not seeing your result? Search SEC EDGAR
+    </button>
+</div>
+{% endif %}
+
+{% if not curated_results and not edgar_results and query %}
+<p class="no-results">No results for "{{ query }}"</p>
+{% endif %}

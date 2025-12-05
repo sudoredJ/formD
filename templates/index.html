@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="search-section">
+    <h2>Find a VC Fund</h2>
+    <p>Enter fund or firm name to search SEC Form D filings.</p>
+    
+    <div class="search-container">
+        <input 
+            type="text" 
+            id="firm-search"
+            name="q" 
+            placeholder="e.g. Lux Capital, Andreessen Horowitz, Sequoia"
+            autocomplete="off"
+            hx-get="/search"
+            hx-trigger="keyup changed delay:150ms"
+            hx-target="#search-results"
+            hx-indicator="#search-spinner"
+        >
+        <span id="search-spinner" class="htmx-indicator">Searching...</span>
+    </div>
+    
+    <div id="search-results"></div>
+</section>
+
+<div class="accent-bar"></div>
+<script>
+// Hide accent bar when search results appear
+document.body.addEventListener('htmx:afterSwap', function(e) {
+    if (e.detail.target.id === 'search-results') {
+        var bar = document.querySelector('.accent-bar');
+        bar.style.display = e.detail.target.innerHTML.trim() ? 'none' : 'block';
+    }
+});
+</script>
+{% endblock %}
+
