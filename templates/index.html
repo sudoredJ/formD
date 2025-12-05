@@ -4,6 +4,7 @@
 <section class="search-section">
     <h2>Find a VC Fund</h2>
     <p>Enter fund or firm name to search SEC Form D filings.</p>
+    <p id="how-to-use" class="how-to-use"><a href="https://substack.com/inbox/post/180813640" target="_blank">how to use →</a></p>
     
     <div class="search-container">
         <input 
@@ -32,6 +33,16 @@ document.body.addEventListener('htmx:afterSwap', function(e) {
         bar.style.display = e.detail.target.innerHTML.trim() ? 'none' : 'block';
     }
 });
+
+// Hide "how to use" after first visit
+(function() {
+    var howTo = document.getElementById('how-to-use');
+    if (localStorage.getItem('vcdoxxer_visited')) {
+        howTo.style.display = 'none';
+    } else {
+        localStorage.setItem('vcdoxxer_visited', '1');
+    }
+})();
 </script>
 {% endblock %}
 
